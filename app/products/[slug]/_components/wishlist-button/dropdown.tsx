@@ -4,8 +4,9 @@ import { clsx } from 'clsx';
 import { CheckIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-import { DropdownMenu, DropdownMenuItem } from '@/vibes/soul/primitives/dropdown-menu';
-import { usePathname, useRouter } from '~/i18n/routing';
+import { DropdownMenu, DropdownMenuItem } from '@/design-system/primitives/dropdown-menu';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { WishlistButtonWishlistInfo } from '.';
 

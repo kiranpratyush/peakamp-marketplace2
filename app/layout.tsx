@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import "../globals.css";
 import clsx from "clsx";
 import { DM_Serif_Text, Inter, Roboto_Mono } from 'next/font/google';
 import { Providers } from "./provider";
+import { Header } from "@/design-system/sections/header";
+import { Footer } from "@/design-system/sections/footer";
 
 
 const inter = Inter({
@@ -35,9 +38,13 @@ export default function RootLayout({
   return (
     <html className={clsx(fonts.map((f) => f.variable))} lang="en">
       <body className="flex min-h-screen flex-col">
+         <NuqsAdapter>
         <Providers>
+          <Header />
         {children}
+          <Footer />
         </Providers>
+        </NuqsAdapter>
       </body>
     </html>
   );

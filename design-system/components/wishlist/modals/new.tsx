@@ -3,11 +3,11 @@
 import { getInputProps } from '@conform-to/react';
 import { useRef } from 'react';
 
-import { FormStatus } from '@/vibes/soul/form/form-status';
-import { Input } from '@/vibes/soul/form/input';
-import { useModalForm } from '~/components/modal/modal-form-provider';
+import { FormStatus } from '@/design-system/primitives/form/form-status';
+import { Input } from '@/design-system/primitives/form/input';
+import { useModalForm } from '@/design-system/sections/modal/modal-form-provider';
 
-import { newWishlistSchema } from '../../../app/[locale]/(default)/account/wishlists/_actions/schema';
+import { newWishlistSchema } from '../schema';
 
 export const NewWishlistModal = ({
   nameLabel = 'Name',

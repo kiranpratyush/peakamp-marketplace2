@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
 import * as React from 'react';
 
-import { FieldError } from '@/vibes/soul/form/field-error';
-import { Label } from '@/vibes/soul/form/label';
+import { FieldError } from '@/design-system/primitives/form/field-error';
+import { Label } from '@/design-system/primitives/form/label';
 
 /**
  * This component supports various CSS variables for theming. Here's a comprehensive list, along

@@ -1,8 +1,7 @@
 import { Slideshow } from "./_components/slideshow";
 import { FeaturedProductCarousel } from "@/design-system/sections/featured-product-carousel";
 import { FeaturedProductList } from "@/design-system/sections/featured-product-list";
-import { Header } from "@/design-system/sections/header";
-import { Footer } from "@/design-system/sections/footer";
+
 
 const newestProducts = [
   {
@@ -85,7 +84,6 @@ export default function Home() {
 
   return (
     <>
-    <Header/>
       <Slideshow />
       <FeaturedProductList
         cta={{ label: 'Shop Now', href: '/shop-all' }}
@@ -105,7 +103,6 @@ export default function Home() {
         products={newestProducts}
         title="Newest Products"
       />
-      <Footer/>
     </>
   );
 }

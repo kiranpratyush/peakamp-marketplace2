@@ -1,7 +1,6 @@
-import { getTranslations } from 'next-intl/server';
 import { SearchParams } from 'nuqs';
 
-import { Streamable } from '@/vibes/soul/lib/streamable';
+import { Streamable } from '@/lib/streamable';  
 
 import { wishlistAction } from '../../_actions/wishlist-action';
 import { SearchParamsRouterRefresh } from '../search-params-router-refresh';
@@ -24,7 +23,6 @@ export const WishlistButtonForm = async ({
   productSku,
   searchParams,
 }: Props) => {
-  const t = await getTranslations('Wishlist');
   const modalVisible = (await searchParams).action === 'addToNewWishlist';
   const sku = await productSku;
 
@@ -36,14 +34,14 @@ export const WishlistButtonForm = async ({
         <input name="selectedSku" type="hidden" value={sku} />
       </form>
       <AddToNewWishlistModal
-        cancelLabel={t('Modal.cancel')}
-        createLabel={t('Modal.create')}
+        cancelLabel="Cancel"
+        createLabel="Create"
         modalVisible={modalVisible}
-        nameLabel={t('Form.nameLabel')}
+        nameLabel="Name"
         productId={productId}
-        requiredError={t('Errors.nameRequired')}
+        requiredError="Name is required"
         selectedSku={sku}
-        title={t('Modal.newTitle')}
+        title="Create New Wishlist"
       />
     </>
   );

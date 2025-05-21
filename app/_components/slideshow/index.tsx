@@ -1,45 +1,42 @@
 import { Slideshow as SlideshowSection } from '@/design-system/slideshow';
+import { PRODUCT_IMAGES } from '@/constants/images';
 
-import SlideBg01 from './slide-bg-01.jpg';
-import SlideBg02 from './slide-bg-02.jpg';
-import SlideBg03 from './slide-bg-03.jpg';
 
 export function Slideshow() {
   const slides = [
     {
-      title: 'Slide 1 Title',
+      title: 'NMC Black Mass',
       image: {
-        src: SlideBg01.src,
+        src: PRODUCT_IMAGES.NMC,
         alt: 'Slide 1 Alt Text',
-        blurDataUrl: SlideBg01.blurDataURL,
       },
-      description: 'Description for slide 1.',
+      description: 'High-quality NMC black mass with optimal composition for battery manufacturing.',
       cta: {
         href: '/shop-all',
         label: 'Shop Now',
       },
     },
     {
-      title: 'Slide 2 Title',
+      title: 'LFP Black Mass',
       image: {
-        src: SlideBg02.src,
+        src: PRODUCT_IMAGES.LFP,
         alt: 'Slide 2 Alt Text',
-        blurDataUrl: SlideBg02.blurDataURL,
+     
       },
-      description: 'Description for slide 2.',
+      description: 'Premium LFP black mass with consistent quality and high recovery rates.',
       cta: {
         href: '/shop-all',
         label: 'Shop Now',
       },
     },
     {
-      title: 'Slide 3 Title',
+      title: 'Recycled Aluminium',
       image: {
-        src: SlideBg03.src,
+        src: PRODUCT_IMAGES.ALUMINIUM,
         alt: 'Slide 3 Alt Text',
-        blurDataUrl: SlideBg03.blurDataURL,
+       
       },
-      description: 'Description for slide 3.',
+      description: 'Recycled aluminum with excellent quality for various applications.',
       cta: {
         href: '/shop-all',
         label: 'Shop Now',

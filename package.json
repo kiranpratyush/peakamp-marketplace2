@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.19.5",
     "@conform-to/react": "^1.5.1",
     "@conform-to/zod": "^1.5.1",
     "@icons-pack/react-simple-icons": "^12.8.0",
@@ -45,6 +46,7 @@
     "@types/react-headroom": "^3.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "prisma": "^6.8.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

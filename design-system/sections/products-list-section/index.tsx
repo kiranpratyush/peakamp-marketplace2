@@ -99,7 +99,7 @@ export function ProductsListSection({
               </Suspense>
             </h1>
             <div className="flex gap-2">
-              <Stream
+              {/* <Stream
                 fallback={<SortingSkeleton />}
                 value={Streamable.all([
                   streamableSortLabel,
@@ -116,7 +116,7 @@ export function ProductsListSection({
                     placeholder={placeholder}
                   />
                 )}
-              </Stream>
+              </Stream> */}
               <div className="block @3xl:hidden">
                 <SidePanel.Root>
                   <SidePanel.Trigger asChild>

@@ -6,6 +6,7 @@ import { DM_Serif_Text, Inter, Roboto_Mono } from 'next/font/google';
 import { Providers } from "./provider";
 import { Header } from "@/design-system/sections/header";
 import { Footer } from "@/design-system/sections/footer";
+import {ClerkProvider} from "@clerk/nextjs";
 
 
 const inter = Inter({
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html className={clsx(fonts.map((f) => f.variable))} lang="en">
       <body className="flex min-h-screen flex-col">
+        <ClerkProvider>
          <NuqsAdapter>
         <Providers>
           <Header />
@@ -45,6 +47,7 @@ export default function RootLayout({
           <Footer />
         </Providers>
         </NuqsAdapter>
+        </ClerkProvider>
       </body>
     </html>
   );

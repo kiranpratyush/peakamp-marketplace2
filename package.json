@@ -6,13 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "ts-node scripts/seed-products.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.19.5",
     "@conform-to/react": "^1.5.1",
     "@conform-to/zod": "^1.5.1",
     "@icons-pack/react-simple-icons": "^12.8.0",
+    "@prisma/client": "^6.8.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/typography": "github:tailwindcss/typography",
     "clsx": "^2.1.1",
@@ -48,6 +50,8 @@
     "eslint-config-next": "15.3.2",
     "prisma": "^6.8.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   }
 }

@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
-import { SubmissionResult, useForm } from '@conform-to/react';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as NavigationMenu from '@radix-ui/react-navigation-menu';
-import * as Popover from '@radix-ui/react-popover';
-import { clsx } from 'clsx';
-import debounce from 'lodash.debounce';
-import { ArrowRight, ChevronDown, Search, SearchIcon, ShoppingBag, User } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { SubmissionResult, useForm } from "@conform-to/react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import * as Popover from "@radix-ui/react-popover";
+import { clsx } from "clsx";
+import debounce from "lodash.debounce";
+import {
+  ArrowRight,
+  ChevronDown,
+  Search,
+  SearchIcon,
+  ShoppingBag,
+  User,
+} from "lucide-react";
+import { useParams } from "next/navigation";
 import React, {
   forwardRef,
   Ref,
@@ -17,18 +24,18 @@ import React, {
   useMemo,
   useState,
   useTransition,
-} from 'react';
-import { useFormStatus } from 'react-dom';
+} from "react";
+import { useFormStatus } from "react-dom";
 
-import { FormStatus } from '@/design-system/primitives/form/form-status';
-import { Stream, Streamable } from '@/lib/streamable';
-import { Button } from '@/design-system/primitives/button';
-import { Logo } from '@/design-system/primitives/logo';
-import { Price } from '@/design-system/primitives/price-label';
-import { ProductCard } from '@/design-system/primitives/product-card'
-import  Link from 'next/link';
-import { useSearch } from '@/context/search-context';
-import { usePathname } from 'next/navigation';
+import { FormStatus } from "@/design-system/primitives/form/form-status";
+import { Stream, Streamable } from "@/lib/streamable";
+import { Button } from "@/design-system/primitives/button";
+import { Logo } from "@/design-system/primitives/logo";
+import { Price } from "@/design-system/primitives/price-label";
+import { ProductCard } from "@/design-system/primitives/product-card";
+import Link from "next/link";
+import { useSearch } from "@/context/search-context";
+import { usePathname } from "next/navigation";
 // import { usePathname, useRouter } from '~/i18n/routing';
 
 interface Link {
@@ -56,12 +63,12 @@ interface Currency {
 
 type Action<State, Payload> = (
   state: Awaited<State>,
-  payload: Awaited<Payload>,
+  payload: Awaited<Payload>
 ) => State | Promise<State>;
 
 export type SearchResult =
   | {
-      type: 'products';
+      type: "products";
       title: string;
       products: Array<{
         id: string;
@@ -72,7 +79,7 @@ export type SearchResult =
       }>;
     }
   | {
-      type: 'links';
+      type: "links";
       title: string;
       links: Array<{ label: string; href: string }>;
     };
@@ -95,7 +102,7 @@ interface Props<S extends SearchResult> {
   cartCount?: Streamable<number | null>;
   cartHref: string;
   links: Streamable<Link[]>;
-  linksPosition?: 'center' | 'left' | 'right';
+  linksPosition?: "center" | "left" | "right";
   locales?: Locale[];
   activeLocaleId?: string;
   currencies?: Currency[];
@@ -122,54 +129,54 @@ interface Props<S extends SearchResult> {
 }
 
 const MobileMenuButton = forwardRef<
-  React.ComponentRef<'button'>,
-  { open: boolean } & React.ComponentPropsWithoutRef<'button'>
+  React.ComponentRef<"button">,
+  { open: boolean } & React.ComponentPropsWithoutRef<"button">
 >(({ open, className, ...rest }, ref) => {
   return (
     <button
       {...rest}
       className={clsx(
-        'group relative rounded-lg p-2 ring-[var(--nav-focus,hsl(var(--primary)))] outline-0 transition-colors focus-visible:ring-2',
-        className,
+        "group relative rounded-lg p-2 ring-[var(--nav-focus,hsl(var(--primary)))] outline-0 transition-colors focus-visible:ring-2",
+        className
       )}
       ref={ref}
     >
       <div className="flex h-4 w-4 origin-center transform flex-col justify-between overflow-hidden transition-all duration-300">
         <div
           className={clsx(
-            'h-px origin-left transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all duration-300',
-            open ? 'translate-x-10' : 'w-7',
+            "h-px origin-left transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all duration-300",
+            open ? "translate-x-10" : "w-7"
           )}
         />
         <div
           className={clsx(
-            'h-px transform rounded-sm bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-75 duration-300',
-            open ? 'translate-x-10' : 'w-7',
+            "h-px transform rounded-sm bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-75 duration-300",
+            open ? "translate-x-10" : "w-7"
           )}
         />
         <div
           className={clsx(
-            'h-px origin-left transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-150 duration-300',
-            open ? 'translate-x-10' : 'w-7',
+            "h-px origin-left transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-150 duration-300",
+            open ? "translate-x-10" : "w-7"
           )}
         />
 
         <div
           className={clsx(
-            'absolute top-2 flex transform items-center justify-between bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all duration-500',
-            open ? 'w-12 translate-x-0' : 'w-0 -translate-x-10',
+            "absolute top-2 flex transform items-center justify-between bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all duration-500",
+            open ? "w-12 translate-x-0" : "w-0 -translate-x-10"
           )}
         >
           <div
             className={clsx(
-              'absolute h-px w-4 transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-300 duration-500',
-              open ? 'rotate-45' : 'rotate-0',
+              "absolute h-px w-4 transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-300 duration-500",
+              open ? "rotate-45" : "rotate-0"
             )}
           />
           <div
             className={clsx(
-              'absolute h-px w-4 transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-300 duration-500',
-              open ? '-rotate-45' : 'rotate-0',
+              "absolute h-px w-4 transform bg-[var(--nav-mobile-button-icon,hsl(var(--foreground)))] transition-all delay-300 duration-500",
+              open ? "-rotate-45" : "rotate-0"
             )}
           />
         </div>
@@ -178,12 +185,12 @@ const MobileMenuButton = forwardRef<
   );
 });
 
-MobileMenuButton.displayName = 'MobileMenuButton';
+MobileMenuButton.displayName = "MobileMenuButton";
 
 const navGroupClassName =
-  'block rounded-lg bg-[var(--nav-group-background,transparent)] px-3 py-2 font-[family-name:var(--nav-group-font-family,var(--font-family-body))] font-medium text-[var(--nav-group-text,hsl(var(--foreground)))] ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors hover:bg-[var(--nav-group-background-hover,hsl(var(--contrast-100)))] hover:text-[var(--nav-group-text-hover,hsl(var(--foreground)))] focus-visible:outline-0 focus-visible:ring-2';
+  "block rounded-lg bg-[var(--nav-group-background,transparent)] px-3 py-2 font-[family-name:var(--nav-group-font-family,var(--font-family-body))] font-medium text-[var(--nav-group-text,hsl(var(--foreground)))] ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors hover:bg-[var(--nav-group-background-hover,hsl(var(--contrast-100)))] hover:text-[var(--nav-group-text-hover,hsl(var(--foreground)))] focus-visible:outline-0 focus-visible:ring-2";
 const navButtonClassName =
-  'relative rounded-lg bg-[var(--nav-button-background,transparent)] p-1.5 text-[var(--nav-button-icon,hsl(var(--foreground)))] ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors focus-visible:outline-0 focus-visible:ring-2 @4xl:hover:bg-[var(--nav-button-background-hover,hsl(var(--contrast-100)))] @4xl:hover:text-[var(--nav-button-icon-hover,hsl(var(--foreground)))]';
+  "relative rounded-lg bg-[var(--nav-button-background,transparent)] p-1.5 text-[var(--nav-button-icon,hsl(var(--foreground)))] ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors focus-visible:outline-0 focus-visible:ring-2 @4xl:hover:bg-[var(--nav-button-background-hover,hsl(var(--contrast-100)))] @4xl:hover:text-[var(--nav-button-icon-hover,hsl(var(--foreground)))]";
 
 /**
  * This component supports various CSS variables for theming. Here's a comprehensive list, along
@@ -253,7 +260,9 @@ const navButtonClassName =
  * }
  * ```
  */
-export const Navigation = forwardRef(function Navigation<S extends SearchResult>(
+export const Navigation = forwardRef(function Navigation<
+  S extends SearchResult
+>(
   {
     className,
     isFloating = false,
@@ -262,31 +271,31 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
     accountHref,
     links: streamableLinks,
     logo: streamableLogo,
-    logoHref = '/',
-    logoLabel = 'Home',
+    logoHref = "/",
+    logoLabel = "Home",
     logoWidth = 200,
     logoHeight = 40,
     mobileLogo: streamableMobileLogo,
     mobileLogoWidth = 100,
     mobileLogoHeight = 40,
-    linksPosition = 'center',
+    linksPosition = "center",
     activeLocaleId,
     locales,
     currencies: streamableCurrencies,
     activeCurrencyId: streamableActiveCurrencyId,
     currencyAction,
     searchHref,
-    searchParamName = 'query',
+    searchParamName = "query",
     searchAction,
     searchCtaLabel,
     searchInputPlaceholder,
-    cartLabel = 'Cart',
-    accountLabel = 'Profile',
-    openSearchPopupLabel = 'Open search popup',
-    searchLabel = 'Search',
-    mobileMenuTriggerLabel = 'Toggle navigation',
+    cartLabel = "Cart",
+    accountLabel = "Profile",
+    openSearchPopupLabel = "Open search popup",
+    searchLabel = "Search",
+    mobileMenuTriggerLabel = "Toggle navigation",
   }: Props<S>,
-  ref: Ref<HTMLDivElement>,
+  ref: Ref<HTMLDivElement>
 ) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isSearchOpen, setIsSearchOpen } = useSearch();
@@ -304,28 +313,34 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
       setIsMobileMenuOpen(false);
     }
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [setIsSearchOpen]);
 
   return (
     <NavigationMenu.Root
-      className={clsx('@container relative mx-auto w-full max-w-(--breakpoint-2xl)', className)}
+      className={clsx(
+        "@container relative mx-auto w-full max-w-(--breakpoint-2xl)",
+        className
+      )}
       delayDuration={0}
       onValueChange={() => setIsSearchOpen(false)}
       ref={ref}
     >
       <div
         className={clsx(
-          'flex items-center justify-between gap-1 bg-[var(--nav-background,hsl(var(--background)))] py-2 pr-2 pl-3 transition-shadow @4xl:rounded-2xl @4xl:px-2 @4xl:pr-2.5 @4xl:pl-6',
+          "flex items-center justify-between gap-1 bg-[var(--nav-background,hsl(var(--background)))] py-2 pr-2 pl-3 transition-shadow @4xl:rounded-2xl @4xl:px-2 @4xl:pr-2.5 @4xl:pl-6",
           isFloating
-            ? 'shadow-xl ring-1 ring-[var(--nav-floating-border,hsl(var(--foreground)/10%))]'
-            : 'shadow-none ring-0',
+            ? "shadow-xl ring-1 ring-[var(--nav-floating-border,hsl(var(--foreground)/10%))]"
+            : "shadow-none ring-0"
         )}
       >
         {/* Mobile Menu */}
-        <Popover.Root onOpenChange={setIsMobileMenuOpen} open={isMobileMenuOpen}>
+        <Popover.Root
+          onOpenChange={setIsMobileMenuOpen}
+          open={isMobileMenuOpen}
+        >
           <Popover.Anchor className="absolute top-full right-0 left-0" />
           <Popover.Trigger asChild>
             <MobileMenuButton
@@ -359,8 +374,11 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
                 >
                   {(links) =>
                     links.map((item, i) => (
-                      <ul className="flex flex-col p-2 @4xl:gap-2 @4xl:p-5" key={i}>
-                        {item.label !== '' && (
+                      <ul
+                        className="flex flex-col p-2 @4xl:gap-2 @4xl:p-5"
+                        key={i}
+                      >
+                        {item.label !== "" && (
                           <li>
                             <Link
                               className="block rounded-lg bg-[var(--nav-mobile-link-background,transparent)] px-3 py-2 font-[family-name:var(--nav-mobile-link-font-family,var(--font-family-body))] font-semibold text-[var(--nav-mobile-link-text,hsl(var(--foreground)))] ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors hover:bg-[var(--nav-mobile-link-background-hover,hsl(var(--contrast-100)))] hover:text-[var(--nav-mobile-link-text-hover,hsl(var(--foreground)))] focus-visible:ring-2 focus-visible:outline-0 @4xl:py-4"
@@ -394,12 +412,14 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
         {/* Logo */}
         <div
           className={clsx(
-            'flex items-center justify-start self-stretch',
-            linksPosition === 'center' ? 'flex-1' : 'flex-1 @4xl:flex-none',
+            "flex items-center justify-start self-stretch",
+            linksPosition === "center" ? "flex-1" : "flex-1 @4xl:flex-none"
           )}
         >
           <Logo
-            className={clsx(streamableMobileLogo != null ? 'hidden @4xl:flex' : 'flex')}
+            className={clsx(
+              streamableMobileLogo != null ? "hidden @4xl:flex" : "flex"
+            )}
             height={logoHeight}
             href={logoHref}
             label={logoLabel}
@@ -421,12 +441,12 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
         {/* Top Level Nav Links */}
         <ul
           className={clsx(
-            'hidden gap-1 @4xl:flex @4xl:flex-1',
+            "hidden gap-1 @4xl:flex @4xl:flex-1",
             {
-              left: '@4xl:justify-start',
-              center: '@4xl:justify-center',
-              right: '@4xl:justify-end',
-            }[linksPosition],
+              left: "@4xl:justify-start",
+              center: "@4xl:justify-center",
+              right: "@4xl:justify-end",
+            }[linksPosition]
           )}
         >
           <Stream
@@ -465,14 +485,19 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
                         {item.groups.map((group, columnIndex) => (
                           <ul className="flex flex-col" key={columnIndex}>
                             {/* Second Level Links */}
-                            {group.label != null && group.label !== '' && (
+                            {group.label != null && group.label !== "" && (
                               <li>
-                                {group.href != null && group.href !== '' ? (
-                                  <Link className={navGroupClassName} href={group.href}>
+                                {group.href != null && group.href !== "" ? (
+                                  <Link
+                                    className={navGroupClassName}
+                                    href={group.href}
+                                  >
                                     {group.label}
                                   </Link>
                                 ) : (
-                                  <span className={navGroupClassName}>{group.label}</span>
+                                  <span className={navGroupClassName}>
+                                    {group.label}
+                                  </span>
                                 )}
                               </li>
                             )}
@@ -502,11 +527,11 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
         {/* Icon Buttons */}
         <div
           className={clsx(
-            'flex items-center justify-end gap-0.5 transition-colors duration-300',
-            linksPosition === 'center' ? 'flex-1' : 'flex-1 @4xl:flex-none',
+            "flex items-center justify-end gap-0.5 transition-colors duration-300",
+            linksPosition === "center" ? "flex-1" : "flex-1 @4xl:flex-none"
           )}
         >
-          {searchAction ? (
+          {/* {searchAction ? (
             <Popover.Root onOpenChange={setIsSearchOpen} open={isSearchOpen}>
               <Popover.Anchor className="absolute top-full right-0 left-0" />
               <Popover.Trigger asChild>
@@ -538,12 +563,20 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
             <Link aria-label={searchLabel} className={navButtonClassName} href={searchHref}>
               <Search size={20} strokeWidth={1} />
             </Link>
-          )}
+          )} */}
 
-          <Link aria-label={accountLabel} className={navButtonClassName} href={accountHref}>
+          <Link
+            aria-label={accountLabel}
+            className={navButtonClassName}
+            href={accountHref}
+          >
             <User size={20} strokeWidth={1} />
           </Link>
-          <Link aria-label={cartLabel} className={navButtonClassName} href={cartHref}>
+          <Link
+            aria-label={cartLabel}
+            className={navButtonClassName}
+            href={cartHref}
+          >
             <ShoppingBag size={20} strokeWidth={1} />
             <Stream
               fallback={
@@ -597,15 +630,15 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
   );
 });
 
-Navigation.displayName = 'Navigation';
+Navigation.displayName = "Navigation";
 
 function SearchForm<S extends SearchResult>({
   searchAction,
-  searchParamName = 'query',
-  searchHref = '/search',
-  searchInputPlaceholder = 'Search Products',
-  searchCtaLabel = 'View more',
-  submitLabel = 'Submit',
+  searchParamName = "query",
+  searchHref = "/search",
+  searchInputPlaceholder = "Search Products",
+  searchCtaLabel = "View more",
+  submitLabel = "Submit",
 }: {
   searchAction: SearchAction<S>;
   searchParamName?: string;
@@ -614,13 +647,15 @@ function SearchForm<S extends SearchResult>({
   searchInputPlaceholder?: string;
   submitLabel?: string;
 }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [isSearching, startSearching] = useTransition();
-  const [{ searchResults, lastResult, emptyStateTitle, emptyStateSubtitle }, formAction] =
-    useActionState(searchAction, {
-      searchResults: null,
-      lastResult: null,
-    });
+  const [
+    { searchResults, lastResult, emptyStateTitle, emptyStateSubtitle },
+    formAction,
+  ] = useActionState(searchAction, {
+    searchResults: null,
+    lastResult: null,
+  });
   const [isDebouncing, setIsDebouncing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isPending = isSearching || isDebouncing || isSubmitting;
@@ -690,7 +725,13 @@ function SearchForm<S extends SearchResult>({
   );
 }
 
-function SubmitButton({ loading, submitLabel }: { loading: boolean; submitLabel: string }) {
+function SubmitButton({
+  loading,
+  submitLabel,
+}: {
+  loading: boolean;
+  submitLabel: string;
+}) {
   const { pending } = useFormStatus();
 
   return (
@@ -711,7 +752,7 @@ function SearchResults({
   searchResults,
   stale,
   emptySearchTitle = `No results were found for '${query}'`,
-  emptySearchSubtitle = 'Please try another search.',
+  emptySearchSubtitle = "Please try another search.",
   errors,
 }: {
   query: string;
@@ -723,7 +764,7 @@ function SearchResults({
   stale: boolean;
   errors?: string[];
 }) {
-  if (query === '') return null;
+  if (query === "") return null;
 
   if (errors != null && errors.length > 0) {
     if (stale) return null;
@@ -757,13 +798,13 @@ function SearchResults({
   return (
     <div
       className={clsx(
-        'flex flex-1 flex-col overflow-y-auto border-t border-[var(--nav-search-divider,hsl(var(--contrast-100)))] @2xl:flex-row',
-        stale && 'opacity-50',
+        "flex flex-1 flex-col overflow-y-auto border-t border-[var(--nav-search-divider,hsl(var(--contrast-100)))] @2xl:flex-row",
+        stale && "opacity-50"
       )}
     >
       {searchResults.map((result, index) => {
         switch (result.type) {
-          case 'links': {
+          case "links": {
             return (
               <section
                 aria-label={result.title}
@@ -789,7 +830,7 @@ function SearchResults({
             );
           }
 
-          case 'products': {
+          case "products": {
             return (
               <section
                 aria-label={result.title}

@@ -2,7 +2,7 @@ import { SearchParams } from "nuqs/server";
 import { ProductsListSection } from "@/design-system/sections/products-list-section";
 import { Product } from "@/design-system/primitives/product-card";
 import { Filter } from "@/design-system/sections/products-list-section/filters-panel";
-import { PRODUCT_IMAGES } from "@/constants/images";
+import { PRODUCT_IMAGES, getProductImageUrl } from "@/constants/images";
 import { fetchProducts, fetchCategoryFilters } from "./page-data";
 interface Props {
   params: Promise<{

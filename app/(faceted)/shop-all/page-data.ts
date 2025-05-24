@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Filter } from "@/design-system/sections/products-list-section/filters-panel";
+import { getProductImageUrl } from "@/constants/images";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +19,7 @@ export async function fetchProducts() {
     title: product.name,
     href: `/products/${product.id}`, // You can modify if slug is used
     image: {
-      src: product.images[0]?.url ?? "/default-product.jpg",
+      src: getProductImageUrl(product.images[0]?.url),
       alt: product.images[0]?.altText ?? product.name,
     },
     price: `₹${product.averageSellPrice.toLocaleString()} per ${product.unit.toLowerCase()}`,
@@ -30,7 +31,7 @@ export async function fetchProducts() {
 }
 
 function normalizeToValue(label: string): string {
-  return label.trim().toLowerCase().replace(/\s+/g, '_');
+  return label.trim().toLowerCase().replace(/\s+/g, "_");
 }
 
 export async function fetchCategoryFilters(): Promise<Filter[]> {
@@ -41,9 +42,9 @@ export async function fetchCategoryFilters(): Promise<Filter[]> {
   });
 
   const filter: Filter = {
-    type: 'toggle-group',
-    paramName: 'categories',
-    label: 'Categories',
+    type: "toggle-group",
+    paramName: "categories",
+    label: "Categories",
     options: categories.map((category) => ({
       label: category.name,
       value: normalizeToValue(category.name),

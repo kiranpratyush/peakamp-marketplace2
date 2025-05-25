@@ -44,7 +44,6 @@ export const addToCart = async (
     };
   }
 
-  return { lastResult: null, fields: prevState.fields };
 };
 
 async function addOrCreateCart(productId: any, quantity: any) {

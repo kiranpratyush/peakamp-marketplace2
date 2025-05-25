@@ -1,18 +1,17 @@
-"use client";
+import { StickySidebarLayout } from "@/design-system/sections/sticky-sidebar-layout";
 
-import OrderSummary from "@/design-system/sections/checkout";
+import OrderSummary from "./order_summary";
 import CheckoutForm from "./checkout_form";
 
 export default function CheckoutPage() {
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-6">
-      {/* Left: Order Summary */}
-      <div className="md:w-1/2 w-full">
-        <OrderSummary />
-        <CheckoutForm />
-      </div>
-
-      {/* Right: Shipping Address Form */}
-    </div>
+    <StickySidebarLayout
+      sidebar={<OrderSummary />}
+      sidebarPosition="after" // Optional: place summary on right side
+      sidebarSize="1/3" // Optional: sets width of sidebar
+      containerSize="2xl" // Optional: layout width
+    >
+      <CheckoutForm />
+    </StickySidebarLayout>
   );
 }

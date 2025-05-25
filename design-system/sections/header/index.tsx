@@ -2,6 +2,7 @@
 
 import { HeaderSection } from "@/design-system/sections/header-section";
 import { Streamable } from "@/lib/streamable";
+import { useUser } from "@clerk/nextjs";
 export const mockSearchAction = async (prevState: any, payload: any) => {
   const query = payload.get("query")?.toString().trim().toLowerCase() ?? "";
 
@@ -126,10 +127,15 @@ const logo = {
 };
 
 export const Header = () => {
+  const { user, isSignedIn } = useUser();
+  let accountHref = "/account/signin";
+  if (isSignedIn) {
+    accountHref = "/account/profile";
+  }
   return (
     <HeaderSection
       navigation={{
-        accountHref: "/account/signin",
+        accountHref: accountHref,
         accountLabel: "Profile",
         cartHref: "/cart",
         cartLabel: "Cart",

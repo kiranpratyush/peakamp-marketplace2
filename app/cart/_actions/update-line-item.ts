@@ -1,56 +1,109 @@
-'use server';
+"use server";
+import { prisma } from "@/lib/db";
+import { z } from "zod";
+import { parseWithZod } from "@conform-to/zod";
+import type {
+  CartLineItem,
+  CartState,
+  Action,
+} from "@/design-system/sections/cart/client";
+import { getProductImageUrl } from "@/constants/images";
+import { unstable_expirePath } from "next/cache";
+const cartLineItemActionFormDataSchema = z.object({
+  id: z.string().min(1),
+  intent: z.enum(["increment", "decrement", "delete"]),
+});
+export const lineItemAction: Action<CartState<CartLineItem>, FormData> = async (
+  prevState,
+  formData
+) => {
+  const submission = parseWithZod(formData, {
+    schema: cartLineItemActionFormDataSchema,
+  });
 
-import { removeItem } from './remove-item';
-import { updateQuantity } from './update-quantity';
-import { parseWithZod } from '@conform-to/zod';
+  if (submission.status !== "success") {
+    return {
+      ...prevState,
+      lastResult: submission.reply(),
+    };
+  }
 
-type LineItem = {
-  selectedOptions: any;
-  productEntityId: number;
-  variantEntityId: number | null;
-  id: string;
-  quantity: number;
-};
+  const { id, intent } = submission.value;
 
-export const updateLineItem = async () => {
-  return {
-    lineItems: [
-      {
-        id: "1",
-        quantity: 2,
-        productEntityId: 101,
-        variantEntityId: 201,
-        selectedOptions: [],
+  try {
+    const existingItem = await prisma.cartItem.findUnique({
+      where: { id },
+      include: {
+        product: true,
       },
-    ],
-    lastResult: null,
-  };
-};
-export const mockLineItemAction= async (state:any, payload:any) => {
-  const intent = payload.get("intent");
-  const id = payload.get("id");
+    });
 
-  switch (intent) {
-    case "increment":
+    if (!existingItem) {
       return {
-        ...state,
-        lineItems: state.lineItems.map((item:any) =>
-          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-        ),
+        ...prevState,
+        lastResult: {
+          status: "error",
+          error: { id: ["Cart item not found"] },
+        },
       };
-    case "decrement":
-      return {
-        ...state,
-        lineItems: state.lineItems.map((item:any) =>
-          item.id === id ? { ...item, quantity: Math.max(item.quantity - 1, 1) } : item
-        ),
-      };
-    case "delete":
-      return {
-        ...state,
-        lineItems: state.lineItems.filter((item:any) => item.id !== id),
-      };
-    default:
-      return state;
+    }
+
+    if (intent === "increment") {
+      await prisma.cartItem.update({
+        where: { id },
+        data: { quantity: existingItem.quantity + 1 },
+      });
+    }
+
+    if (intent === "decrement") {
+      if (existingItem.quantity > 1) {
+        await prisma.cartItem.update({
+          where: { id },
+          data: { quantity: existingItem.quantity - 1 },
+        });
+      }
+    }
+
+    if (intent === "delete") {
+      await prisma.cartItem.delete({ where: { id } });
+    }
+
+    // Reload updated line items
+    const updatedItems = await prisma.cartItem.findMany({
+      where: { cartId: existingItem.cartId },
+      include: {
+        product: {
+          include: {
+            images: true,
+          },
+        },
+      },
+    });
+
+    const updatedLineItems: CartLineItem[] = updatedItems.map((item) => ({
+      id: item.id,
+      image: {
+        alt: item.product.name,
+        src: getProductImageUrl(item.product.images[0]?.url),
+      },
+      title: item.product.name,
+      subtitle: item.product.summary ?? "",
+      quantity: item.quantity,
+      price: `₹${(item.product.averageSellPrice * item.quantity).toFixed(2)}`,
+    }));
+    unstable_expirePath("/cart");
+    return {
+      lineItems: updatedLineItems,
+      lastResult: submission.reply(),
+    };
+  } catch (err) {
+    console.error("Failed to update cart:", err);
+    return {
+      ...prevState,
+      lastResult: {
+        status: "error",
+        error: { _form: ["Unexpected error occurred"] },
+      },
+    };
   }
 };

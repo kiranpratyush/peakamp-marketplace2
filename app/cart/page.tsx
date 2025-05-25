@@ -3,27 +3,12 @@ import {
   CartEmptyState,
 } from "@/design-system/sections/cart";
 import { redirectToCheckout } from "./_actions/redirect-to-checkout";
-import { mockLineItemAction } from "./_actions/update-line-item";
+import { lineItemAction } from "./_actions/update-line-item";
 import { prisma } from "@/lib/db";
 import { getProductImageUrl } from "@/constants/images";
 
-const mockCheckoutAction = async (lastResult: any, payload: any) => {
-  const isValid = payload.get("checkout") === "true";
-
-  if (isValid) {
-    return null; // Simulate successful checkout
-  }
-
-  return {
-    formErrors: ["Checkout failed. Please try again."],
-  };
-};
-
 interface Props {
   params: Promise<{ locale: string }>;
-}
-function exists<T>(value: T | null | undefined): value is T {
-  return value != null;
 }
 
 // eslint-disable-next-line complexity
@@ -99,7 +84,7 @@ export default async function Cart({ params }: Props) {
         }}
         incrementLineItemLabel={"Increment"}
         key={`${cart.id}`}
-        lineItemAction={mockLineItemAction}
+        lineItemAction={lineItemAction}
         shipping={undefined}
         summaryTitle={"Order Summary"}
         title={"Your Cart"}

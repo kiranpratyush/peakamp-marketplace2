@@ -10,14 +10,15 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
+  id          String    @id @default(cuid())
+  email       String    @unique
   name        String?
   phoneNumber String?
   orders      Order[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   Cart        Cart?
+  addresses   Address[] // One-to-many: a user can have multiple addresses
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Category {
@@ -66,15 +67,26 @@ model Order {
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String
-  product   Product  @relation(fields: [productId], references: [id])
-  productId String
-  quantity  Int
-  condition String?
-  comment   String?
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  order          Order    @relation(fields: [orderId], references: [id])
+  orderId        String
+  product        Product  @relation(fields: [productId], references: [id])
+  productId      String
+  quantity       Int
+  condition      String?
+  comment        String?
+  createdAt      DateTime @default(now())
+  addressType    String?
+  firstName      String
+  lastName       String
+  companyName    String?
+  phoneNumber    String?
+  streetAddress  String
+  apartmentSuite String?
+  city           String
+  country        String
+  postalcode     String
+  state          String
 }
 
 model Cart {
@@ -94,6 +106,25 @@ model CartItem {
   productId String
   quantity  Int
   createdAt DateTime @default(now())
+}
+
+model Address {
+  id             String   @id @default(cuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  name           String // e.g., "Home", "Work", "Billing", etc.
+  firstName      String
+  lastName       String
+  companyName    String?
+  phoneNumber    String?
+  streetAddress  String
+  apartmentSuite String?
+  city           String
+  country        String
+  postalcode     String
+  state          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum Unit {

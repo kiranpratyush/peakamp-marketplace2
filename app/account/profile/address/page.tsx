@@ -1,5 +1,5 @@
 // app/address/page.tsx
-import { AddressCard } from "./addresscard";
+import { AddressCard } from "../../_components/AddressCard";
 
 interface Address {
   id: string;
@@ -29,6 +29,18 @@ async function getUserAddresses(): Promise<Address[]> {
       country: "India",
       postalcode: "560001",
     },
+    {
+      id: "2",
+      name: "Home",
+      firstName: "Pratyush",
+      lastName: "Rout",
+      phoneNumber: "9876543210",
+      streetAddress: "123 Green St",
+      city: "Bangalore",
+      state: "KA",
+      country: "India",
+      postalcode: "560001",
+    },
   ];
 }
 
@@ -38,9 +50,9 @@ export default async function AddressPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6">Saved Addresses</h1>
-      <div className="space-y-4">
+      <div className="flex flex-wrap gap-1">
         {addresses.map((address) => (
-          <AddressCard key={address.id} address={address} />
+            <AddressCard address={address} key={address.id} />
         ))}
       </div>
     </div>

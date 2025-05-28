@@ -6,11 +6,14 @@ import { useForm } from "react-hook-form";
 import { FormValues } from "./actions/address_action";
 import AddressFormFields from "./address-form-fields";
 import { Button } from "@/design-system/primitives/button";
+import { useState } from "react";
 
 interface AddressDialogProps {
   trigger: React.ReactNode;
   defaultValues?: FormValues;
-  onSubmit: (data: FormValues) => Promise<void> | void;
+  onSubmit: (
+    data: FormValues
+  ) => Promise<{ success: boolean; message?: string }>;
   title?: string;
   isLoading?: boolean;
 }
@@ -22,18 +25,35 @@ export default function AddressDialog({
   title = "Save Address",
   isLoading = false,
 }: AddressDialogProps) {
-  const form = useForm<FormValues>({
-    defaultValues,
-  });
-
+  const form = useForm<FormValues>({ defaultValues });
   const { handleSubmit } = form;
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleFormSubmit = async (data: FormValues) => {
+    setErrorMessage(null);
+    try {
+      const result = await onSubmit(data);
+      if (!result.success) {
+        setErrorMessage(
+          result.message || "Something went wrong. Please try again."
+        );
+      } else {
+        setOpen(false);
+      }
+    } catch (err) {
+      setErrorMessage("An unexpected error occurred.");
+      console.error("Submission error:", err);
+    }
+  };
+
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
-        <Dialog.Content className="fixed z-50 left-1/2 top-1/2 max-h-[90vh] w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white dark:bg-gray-900 p-6 shadow-lg overflow-y-auto">
+        <Dialog.Content className="fixed z-50 left-1/2 top-1/2 max-h-[90vh] w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 bg-white p-8 shadow-lg overflow-y-auto">
           <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white">
             {title}
           </Dialog.Title>
@@ -45,7 +65,7 @@ export default function AddressDialog({
           </Dialog.Close>
 
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(handleFormSubmit)}
             className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"
           >
             <AddressFormFields
@@ -69,6 +89,11 @@ export default function AddressDialog({
               </Button>
             </div>
           </form>
+          {errorMessage && (
+            <div className="md:col-span-2 text-sm text-red-600">
+              {errorMessage}
+            </div>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

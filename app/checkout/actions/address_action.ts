@@ -18,7 +18,7 @@ export type FormValues = {
   saveForFuture?: boolean;
 };
 
-export async function getAddressesForUser(): Promise<any> {
+export async function getAddressesForUser(): Promise<FormValues[]> {
   const email = "dummy@example.com";
   const user = await prisma.user.findUnique({
     where: { email },
@@ -69,11 +69,40 @@ export async function createAddressForUser(data: FormValues) {
     return { success: false, error: (error as Error).message };
   }
 }
+export async function updateAddressForUser(data: FormValues) {
+  try {
+    const email = "dummy@example.com";
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { addresses: true },
+    });
+    if (!user) throw new Error("User not found");
+    const addressToUpdate = user.addresses.find((addr) => addr.id === data.id);
+    if (!addressToUpdate) throw new Error("Address not found or access denied");
+    const updated = await prisma.address.update({
+      where: { id: data.id },
+      data: {
+        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        companyName: data.companyName,
+        phoneNumber: data.phoneNumber,
+        streetAddress: data.streetAddress,
+        apartmentSuite: data.apartmentSuite,
+        city: data.city,
+        country: data.country,
+        postalcode: data.postalcode,
+        state: data.state,
+      },
+    });
+    revalidatePath("/account/profile/address");
+    return { success: true, formValues: toFormValues(updated) };
+  } catch (err: unknown) {
+    return { success: false, error: (err as Error).message };
+  }
+}
 
-type AddressRecordFromDB = Awaited<
-  ReturnType<typeof getAddressesForUser>
->[number];
-function toFormValues(address: AddressRecordFromDB): FormValues {
+function toFormValues(address: any): FormValues {
   return {
     firstName: address.firstName,
     lastName: address.lastName,

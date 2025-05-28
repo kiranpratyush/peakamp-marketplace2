@@ -23,6 +23,7 @@ export default function AddressFormFields({
 
   return (
     <>
+      <input type="hidden" {...register("id")} />
       <Input
         key="firstName"
         label="First Name"
@@ -30,7 +31,9 @@ export default function AddressFormFields({
         placeholder="Enter first name"
         type="text"
         {...register("firstName", { required: "First name is required" })}
-        errors={errors.firstName?.message ? [errors.firstName.message] : undefined}
+        errors={
+          errors.firstName?.message ? [errors.firstName.message] : undefined
+        }
       />
       <Input
         key="lastName"
@@ -39,7 +42,9 @@ export default function AddressFormFields({
         placeholder="Enter last name"
         type="text"
         {...register("lastName", { required: "Last name is required" })}
-        errors={errors.lastName?.message ? [errors.lastName.message] : undefined}
+        errors={
+          errors.lastName?.message ? [errors.lastName.message] : undefined
+        }
       />
       <Input
         key="companyName"
@@ -65,8 +70,14 @@ export default function AddressFormFields({
         id="streetAddress"
         placeholder="123 Main St"
         type="text"
-        {...register("streetAddress", { required: "Street address is required" })}
-        errors={errors.streetAddress?.message ? [errors.streetAddress.message] : undefined}
+        {...register("streetAddress", {
+          required: "Street address is required",
+        })}
+        errors={
+          errors.streetAddress?.message
+            ? [errors.streetAddress.message]
+            : undefined
+        }
         className="md:col-span-2"
       />
       <Input
@@ -112,7 +123,9 @@ export default function AddressFormFields({
         placeholder="Postal code"
         type="text"
         {...register("postalcode", { required: "Postal code is required" })}
-        errors={errors.postalcode?.message ? [errors.postalcode.message] : undefined}
+        errors={
+          errors.postalcode?.message ? [errors.postalcode.message] : undefined
+        }
       />
       <Input
         key="name"
@@ -128,7 +141,11 @@ export default function AddressFormFields({
       {showSaveCheckbox && (
         <div className="md:col-span-2 mt-4">
           <label className="inline-flex items-center gap-2">
-            <input type="checkbox" {...register("saveForFuture")} disabled={isLoading} />
+            <input
+              type="checkbox"
+              {...register("saveForFuture")}
+              disabled={isLoading}
+            />
             <span>Save this address for future use</span>
           </label>
         </div>

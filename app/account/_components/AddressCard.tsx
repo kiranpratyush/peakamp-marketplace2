@@ -1,41 +1,25 @@
-// app/address/AddressCard.tsx
 "use client";
 
 import { PencilIcon } from "lucide-react";
 import AddressDialog from "@/app/checkout/address-dialog";
+import { updateAddressForUser } from "@/app/checkout/actions/address_action";
 import { FormValues } from "@/app/checkout/actions/address_action";
 
 interface Props {
-  address: {
-    id: string;
-    name: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    postalcode: string;
-  };
+  address: FormValues;
 }
 
 export function AddressCard({ address }: Props) {
-  const handleAddressSave = async (data: FormValues) => {
-    console.log("Saved!", data);
-    // Call update API here
-  };
-
   return (
-    <div className="relative border border-gray-200 rounded-lg p-5 shadow-sm bg hover:shadow-md transition ">
+    <div className="relative border border-gray-200 rounded-lg p-5 shadow-sm bg hover:shadow-md transition min-w-lg flex flex-col">
       <AddressDialog
         trigger={
-          <button className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+          <button className="text-sm text-blue-600 hover:underline flex items-center gap-1 self-end cursor-pointer">
             <PencilIcon size={16} /> Edit
           </button>
         }
         defaultValues={address}
-        onSubmit={handleAddressSave}
+        onSubmit={updateAddressForUser}
         title="Edit Address"
       />
 

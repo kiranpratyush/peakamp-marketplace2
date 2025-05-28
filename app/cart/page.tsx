@@ -42,7 +42,7 @@ export default async function Cart({ params }: Props) {
       />
     );
   }
-  const formattedLineItems = cart.items.map((item) => ({
+  const formattedLineItems = cart.items.map((item: any) => ({
     id: item.id,
     title: item.product.name,
     subtitle: item.product.summary || "",
@@ -55,7 +55,7 @@ export default async function Cart({ params }: Props) {
     total: item.quantity * item.product.averageSellPrice,
   }));
   const subtotal = formattedLineItems.reduce(
-    (sum, item) => sum + item.total,
+    (sum: any, item: any) => sum + item.total,
     0
   );
 

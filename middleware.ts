@@ -7,10 +7,10 @@ import {
 const isProtectedRoute = createRouteMatcher(["/cart(.*)", "/checkout(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // const { userId, redirectToSignIn } = await auth();
-  // if (!userId && isProtectedRoute(req)) {
-  //   return redirectToSignIn();
-  // }
+  const { userId, redirectToSignIn } = await auth();
+  if (!userId && isProtectedRoute(req)) {
+    return redirectToSignIn();
+  }
 });
 
 export const config = {

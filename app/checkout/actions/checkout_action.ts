@@ -1,12 +1,13 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { FormValues } from "./address_action";
+import { revalidatePath } from "next/cache";
 
 export async function checkoutActionForUser(
   data: FormValues,
   userEmail: string
 ) {
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: any) => {
     const user = await tx.user.findUnique({
       where: { email: userEmail },
       include: {
@@ -37,7 +38,7 @@ export async function checkoutActionForUser(
         userId: user.id,
         status: "PENDING",
         items: {
-          create: cart.items.map((item) => ({
+          create: cart.items.map((item: any) => ({
             productId: item.product.id,
             quantity: item.quantity,
             addressType: data.name || "Shipping",
@@ -62,7 +63,7 @@ export async function checkoutActionForUser(
         cartId: cart.id,
       },
     });
-
+    revalidatePath("/", "layout");
     return {
       success: true,
       orderId: order.id,

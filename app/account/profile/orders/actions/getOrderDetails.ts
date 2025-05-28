@@ -1,4 +1,4 @@
-// actions/order_action.ts
+"use server";
 import { prisma } from "@/lib/db"; // adjust path to match your project
 
 export async function getOrderDetailsForUser(email: string) {

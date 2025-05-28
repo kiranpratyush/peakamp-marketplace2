@@ -26,7 +26,7 @@ export default async function Product({ params, searchParams }: Props) {
     id: product.id,
     title: product.name,
     href: `/products/${product.id}`,
-    images: product.images.map((img) => ({
+    images: product.images.map((img: any) => ({
       src: getProductImageUrl(img.url),
       alt: img.altText ?? product.name,
     })),

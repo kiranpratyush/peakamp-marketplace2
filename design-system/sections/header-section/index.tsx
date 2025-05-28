@@ -1,31 +1,35 @@
-'use client';
+"use client";
 
-import { forwardRef, useEffect, useState } from 'react';
-import Headroom from 'react-headroom';
+import { forwardRef, useEffect, useState } from "react";
+import Headroom from "react-headroom";
 
-import { Banner } from '@/design-system/primitives/banner';
-import { Navigation } from '@/design-system/primitives/navigation';
+import { Banner } from "@/design-system/primitives/banner";
+import { Navigation } from "@/design-system/primitives/navigation";
 
 interface Props {
   navigation: React.ComponentPropsWithoutRef<typeof Navigation>;
   banner?: React.ComponentPropsWithoutRef<typeof Banner>;
 }
 
-export const HeaderSection = forwardRef<React.ComponentRef<'div'>, Props>(
+export const HeaderSection = forwardRef<React.ComponentRef<"div">, Props>(
   ({ navigation, banner }, ref) => {
-    const [bannerElement, setBannerElement] = useState<HTMLElement | null>(null);
+    const [bannerElement, setBannerElement] = useState<HTMLElement | null>(
+      null
+    );
     const [bannerHeight, setBannerHeight] = useState(0);
     const [isFloating, setIsFloating] = useState(false);
 
     useEffect(() => {
       if (!bannerElement) return;
 
-      const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const entry of entries) {
-          setBannerHeight(entry.contentRect.height);
+      const resizeObserver = new ResizeObserver(
+        (entries: ResizeObserverEntry[]) => {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const entry of entries) {
+            setBannerHeight(entry.contentRect.height);
+          }
         }
-      });
+      );
 
       resizeObserver.observe(bannerElement);
 
@@ -35,7 +39,10 @@ export const HeaderSection = forwardRef<React.ComponentRef<'div'>, Props>(
     }, [bannerElement]);
 
     return (
-      <div ref={ref}>
+      <div
+        ref={ref}
+        className="border-b-[var(--footer-border-bottom,hsl(var(--primary)))] border-b-[2px] bg-background"
+      >
         {banner && <Banner ref={setBannerElement} {...banner} />}
         <Headroom
           onUnfix={() => setIsFloating(false)}
@@ -48,7 +55,7 @@ export const HeaderSection = forwardRef<React.ComponentRef<'div'>, Props>(
         </Headroom>
       </div>
     );
-  },
+  }
 );
 
-HeaderSection.displayName = 'HeaderSection';
+HeaderSection.displayName = "HeaderSection";

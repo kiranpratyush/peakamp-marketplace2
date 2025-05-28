@@ -76,12 +76,7 @@ export default function AddressDialog({
 
             <div className="md:col-span-2 mt-6 flex justify-end gap-4">
               <Dialog.Close asChild>
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700"
-                >
-                  Cancel
-                </button>
+                <Button variant="tertiary">Cancel</Button>
               </Dialog.Close>
 
               <Button type="submit" loading={isLoading}>

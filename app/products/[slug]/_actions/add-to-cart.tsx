@@ -43,7 +43,6 @@ export const addToCart = async (
       fields: prevState.fields,
     };
   }
-
 };
 
 async function addOrCreateCart(productId: any, quantity: any) {
@@ -85,7 +84,7 @@ async function addOrCreateCart(productId: any, quantity: any) {
   } else {
     // 3. Check if the item already exists in cart
     const existingItem = cart.items.find(
-      (item) => item.productId === productId
+      (item: any) => item.productId === productId
     );
 
     if (existingItem) {
@@ -107,9 +106,7 @@ async function addOrCreateCart(productId: any, quantity: any) {
       });
     }
   }
-
-  // Optional: revalidate cart path
-  revalidatePath("/cart");
+  revalidatePath("/", "layout");
 
   return {
     status: "success",

@@ -1,75 +1,40 @@
-"use client";
-
+"use server";
+import { prisma } from "@/lib/db";
 import { HeaderSection } from "@/design-system/sections/header-section";
 import { Streamable } from "@/lib/streamable";
-import { useUser } from "@clerk/nextjs";
-export const mockSearchAction = async (prevState: any, payload: any) => {
-  const query = payload.get("query")?.toString().trim().toLowerCase() ?? "";
+import { auth } from "@clerk/nextjs/server";
 
-  if (!query) {
-    return {
-      ...prevState,
-      lastResult: {
-        status: "error",
-        error: { query: ["Query is required"] },
-        fields: ["query"],
+export async function getCartCount() {
+  try {
+    // Find the dummy user
+    const dummyEmail = "dummy@example.com";
+    const user = await prisma.user.findUnique({
+      where: { email: dummyEmail },
+      include: {
+        Cart: {
+          include: {
+            items: true,
+          },
+        },
       },
-      searchResults: [],
-      emptyStateTitle: "No query provided",
-      emptyStateSubtitle: "Please enter a search term.",
-    };
+    });
+
+    // If no user or cart exists yet, return 0
+    if (!user || !user.Cart) {
+      return 0;
+    }
+
+    // Count total items in cart
+    const itemCount = user.Cart.items.reduce((total: any, item: any) => {
+      return total + item.quantity;
+    }, 0);
+
+    return itemCount;
+  } catch (error) {
+    console.error("Error fetching cart count:", error);
+    return 0;
   }
-
-  // Simulate mock products for certain keywords
-  const mockProducts =
-    query === "shirt"
-      ? [
-          {
-            type: "products",
-            title: 'Products matching "shirt"',
-            products: [
-              {
-                id: "1",
-                title: "Blue Shirt",
-                href: "/products/1",
-                price: {
-                  type: "sale",
-                  previousValue: "₹1200",
-                  currentValue: "₹800",
-                },
-                image: {
-                  src: "https://via.placeholder.com/150",
-                  alt: "Blue Shirt",
-                },
-              },
-            ],
-          },
-        ]
-      : [
-          {
-            type: "links",
-            title: "Quick Links",
-            links: [
-              { label: "Search Help", href: "/help/search" },
-              { label: "Contact Support", href: "/contact" },
-            ],
-          },
-        ];
-
-  return {
-    searchResults: mockProducts,
-    lastResult: { status: "success" },
-    emptyStateTitle: `No results found for "${query}"`,
-    emptyStateSubtitle: "Try adjusting your search terms.",
-  };
-};
-
-// Mock currency switch action
-const switchCurrency = async (_state: any, payload: FormData) => {
-  const currency = payload.get("id");
-  console.log("Currency switched to:", currency);
-  return _state;
-};
+}
 
 // Mock navigation links (top-level + grouped)
 const mockLinks = Streamable.from(async () => [
@@ -81,57 +46,20 @@ const mockLinks = Streamable.from(async () => [
   {
     label: "Shop all ",
     href: "/shop-all",
-    // groups: [
-    //   {
-    //     label: 'Men',
-    //     href: '/products/men',
-    //     links: [
-    //       { label: 'Shirts', href: '/products/men/shirts' },
-    //       { label: 'Shoes', href: '/products/men/shoes' },
-    //     ],
-    //   },
-    //   {
-    //     label: 'Women',
-    //     href: '/products/women',
-    //     links: [
-    //       { label: 'Dresses', href: '/products/women/dresses' },
-    //       { label: 'Heels', href: '/products/women/heels' },
-    //     ],
-    //   },
-    // ],
   },
 ]);
 
-// Mock cart count
-const mockCartCount = Streamable.from(async () => 3);
+export const Header = async () => {
+  const { userId } = await auth();
 
-// Mock active currency
-const mockActiveCurrencyId = Streamable.from(async () => "USD");
-
-// Mock locales
-const locales = [
-  { id: "en", label: "EN" },
-  { id: "fr", label: "FR" },
-];
-
-// Mock currencies
-const currencies = [
-  { id: "USD", label: "USD", isDefault: true },
-  { id: "EUR", label: "EUR", isDefault: false },
-];
-
-// Mock logo
-const logo = {
-  src: "https://images.unsplash.com/photo-1735825764445-af30f44dc49f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  alt: "Site Logo",
-};
-
-export const Header = () => {
-  const { user, isSignedIn } = useUser();
-  let accountHref = "/account/signin";
-  if (isSignedIn) {
+  // Get actual cart count from database
+  const cartCount = await getCartCount();
+  console.log(userId);
+  let accountHref = "/account/sign-in";
+  if (userId) {
     accountHref = "/account/profile";
   }
+
   return (
     <HeaderSection
       navigation={{
@@ -147,7 +75,7 @@ export const Header = () => {
         mobileMenuTriggerLabel: "Menu",
         openSearchPopupLabel: "Search",
         logoLabel: "Home",
-        cartCount: null,
+        cartCount: cartCount,
         activeLocaleId: "en",
         locales: undefined,
         currencies: undefined,
